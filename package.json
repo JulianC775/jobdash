@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "start": "concurrently --names \"flask,react\" --prefix-colors \"cyan,magenta\" \"npm run start:backend\" \"npm run start:frontend\"",
-    "start:backend": "cd backend && source venv/bin/activate && flask run",
+    "start:backend": "cd backend && ./venv/bin/flask run --host=127.0.0.1",
     "start:frontend": "cd frontend && npm start"
   },
   "devDependencies": {

@@ -6,9 +6,13 @@ export function useBookmarks() {
   const [bookmarkedIds, setBookmarkedIds] = useState(new Set());
 
   const refresh = useCallback(async () => {
-    const data = await getBookmarks();
-    setBookmarks(data.bookmarks);
-    setBookmarkedIds(new Set(data.bookmarks.map((b) => b.job_id)));
+    try {
+      const data = await getBookmarks();
+      setBookmarks(data.bookmarks);
+      setBookmarkedIds(new Set(data.bookmarks.map((b) => b.job_id)));
+    } catch {
+      // backend not yet reachable; leave existing state intact
+    }
   }, []);
 
   useEffect(() => { refresh(); }, [refresh]);

@@ -1,10 +1,32 @@
 /* ── Reset & base ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root {
+  --bg:          #0f1117;
+  --bg-surface:  #1a1d27;
+  --bg-elevated: #22263a;
+  --border:      #2e3352;
+  --text:        #e2e8f0;
+  --text-muted:  #8892a4;
+  --accent:      #4cc9f0;
+  --accent-dark: #0f1117;
+  --danger-bg:   #2d1515;
+  --danger-text: #f87171;
+  --danger-border: #5c2323;
+  --badge-bg:    #1e2235;
+  --badge-text:  #94a3b8;
+  --badge-remote-bg:   #0d2e1f;
+  --badge-remote-text: #34d399;
+  --badge-salary-bg:   #1e1535;
+  --badge-salary-text: #a78bfa;
+  --badge-loc-bg:      #0d1f2e;
+  --badge-loc-text:    #38bdf8;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #f0f2f5;
-  color: #1a1a2e;
+  background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
 }
 
@@ -12,8 +34,8 @@ body {
 .app { display: flex; flex-direction: column; min-height: 100vh; }
 
 .app-header {
-  background: #1a1a2e;
-  color: #fff;
+  background: var(--bg-surface);
+  color: var(--text);
   padding: 0 2rem;
   display: flex;
   align-items: center;
@@ -22,25 +44,26 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0,0,0,.4);
 }
 
-.app-logo { font-size: 1.4rem; font-weight: 700; letter-spacing: -.5px; color: #4cc9f0; }
+.app-logo { font-size: 1.4rem; font-weight: 700; letter-spacing: -.5px; color: var(--accent); }
 
 .app-nav { display: flex; gap: .5rem; margin-left: auto; }
 
 .nav-tab {
   background: transparent;
   border: none;
-  color: #ccc;
+  color: var(--text-muted);
   padding: .5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
   font-size: .95rem;
   transition: background .15s, color .15s;
 }
-.nav-tab:hover { background: rgba(255,255,255,.1); color: #fff; }
-.nav-tab--active { background: #4cc9f0; color: #1a1a2e; font-weight: 600; }
+.nav-tab:hover { background: rgba(255,255,255,.06); color: var(--text); }
+.nav-tab--active { background: var(--accent); color: var(--accent-dark); font-weight: 600; }
 
 .app-main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; width: 100%; }
 
@@ -49,22 +72,26 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: .75rem;
-  background: #fff;
+  background: var(--bg-surface);
   padding: 1.25rem;
   border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  border: 1px solid var(--border);
   margin-bottom: 1.5rem;
 }
 
 .filter-input, .filter-select {
   padding: .55rem .85rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   border-radius: 8px;
   font-size: .9rem;
   outline: none;
+  background: var(--bg-elevated);
+  color: var(--text);
   transition: border-color .15s;
 }
-.filter-input:focus, .filter-select:focus { border-color: #4cc9f0; }
+.filter-input::placeholder { color: var(--text-muted); }
+.filter-input:focus, .filter-select:focus { border-color: var(--accent); }
+.filter-select option { background: var(--bg-elevated); }
 .filter-input--query { flex: 1 1 220px; }
 .filter-input--salary { width: 130px; }
 .filter-select { min-width: 140px; }
@@ -74,9 +101,11 @@ body {
   align-items: center;
   gap: .4rem;
   font-size: .9rem;
+  color: var(--text-muted);
   cursor: pointer;
   user-select: none;
 }
+.filter-checkbox input { accent-color: var(--accent); }
 
 /* ── Buttons ── */
 .btn {
@@ -90,12 +119,12 @@ body {
   display: inline-block;
   transition: opacity .15s, transform .1s;
 }
-.btn:hover { opacity: .88; }
+.btn:hover { opacity: .85; }
 .btn:active { transform: scale(.97); }
-.btn--primary { background: #4cc9f0; color: #1a1a2e; }
-.btn--outline { background: transparent; border: 1px solid #4cc9f0; color: #4cc9f0; }
-.btn--danger { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
-.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn--primary { background: var(--accent); color: var(--accent-dark); }
+.btn--outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+.btn--danger { background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
 
 /* ── Job grid ── */
 .job-grid {
@@ -106,22 +135,32 @@ body {
 
 /* ── Job card ── */
 .job-card {
-  background: #fff;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1.25rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,.07);
   display: flex;
   flex-direction: column;
   gap: .75rem;
-  transition: box-shadow .2s, transform .15s;
+  transition: border-color .2s, transform .15s, box-shadow .2s;
 }
-.job-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); transform: translateY(-2px); }
+.job-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 4px 20px rgba(76,201,240,.08);
+  transform: translateY(-2px);
+}
 
 .job-card__header { display: flex; align-items: flex-start; gap: .75rem; }
-.job-card__logo { width: 42px; height: 42px; object-fit: contain; border-radius: 8px; border: 1px solid #e5e7eb; }
+.job-card__logo {
+  width: 42px; height: 42px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
 
-.job-card__title { font-size: 1rem; font-weight: 600; line-height: 1.3; }
-.job-card__company { font-size: .85rem; color: #6b7280; margin-top: .15rem; }
+.job-card__title { font-size: 1rem; font-weight: 600; line-height: 1.3; color: var(--text); }
+.job-card__company { font-size: .85rem; color: var(--text-muted); margin-top: .15rem; }
 
 .job-card__meta { display: flex; flex-wrap: wrap; gap: .4rem; }
 
@@ -130,21 +169,23 @@ body {
   padding: .25rem .6rem;
   border-radius: 20px;
   font-size: .78rem;
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--badge-bg);
+  color: var(--badge-text);
 }
-.badge--remote { background: #d1fae5; color: #065f46; }
-.badge--salary { background: #ede9fe; color: #5b21b6; }
-.badge--location { background: #e0f2fe; color: #0369a1; }
+.badge--remote  { background: var(--badge-remote-bg);  color: var(--badge-remote-text); }
+.badge--salary  { background: var(--badge-salary-bg);  color: var(--badge-salary-text); }
+.badge--location { background: var(--badge-loc-bg);    color: var(--badge-loc-text); }
 
-.job-card__desc { font-size: .85rem; color: #6b7280; line-height: 1.5; }
+.job-card__desc { font-size: .85rem; color: var(--text-muted); line-height: 1.5; }
 
 .job-card__actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; }
 
 .status-select {
   padding: .45rem .7rem;
   border-radius: 8px;
-  border: 2px solid #d1d5db;
+  border: 2px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text);
   font-size: .85rem;
   cursor: pointer;
   outline: none;
@@ -154,26 +195,28 @@ body {
 .bookmark-list { display: flex; flex-direction: column; gap: 1.5rem; }
 
 .bookmark-list__header { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
-.bookmark-list__header h2 { font-size: 1.2rem; }
+.bookmark-list__header h2 { font-size: 1.2rem; color: var(--text); }
 
 .status-tabs { display: flex; flex-wrap: wrap; gap: .4rem; }
 
 .status-tab {
   padding: .3rem .8rem;
   border-radius: 20px;
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-muted);
   font-size: .82rem;
   cursor: pointer;
-  transition: background .15s, color .15s;
+  transition: background .15s, color .15s, border-color .15s;
 }
-.status-tab:hover { background: #f3f4f6; }
-.status-tab--active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+.status-tab:hover { background: var(--bg-elevated); color: var(--text); }
+.status-tab--active { background: var(--accent); color: var(--accent-dark); border-color: var(--accent); font-weight: 600; }
 
 /* ── Misc ── */
 .error-banner {
-  background: #fee2e2;
-  color: #dc2626;
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border: 1px solid var(--danger-border);
   padding: .75rem 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -182,7 +225,7 @@ body {
 
 .empty-state {
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-muted);
   padding: 3rem;
   font-size: 1rem;
 }
