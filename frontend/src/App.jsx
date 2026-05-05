@@ -7,14 +7,19 @@ import { useBookmarks } from "./hooks/useBookmarks";
 import "./App.css";
 
 const TABS = ["search", "saved"];
+const PAGE_SIZE = 10;
 
 export default function App() {
   const [tab, setTab] = useState("search");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [searched, setSearched] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [currentFilters, setCurrentFilters] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
 
   const { bookmarks, bookmarkedIds, save, remove, setStatus } = useBookmarks();
 
@@ -23,14 +28,34 @@ export default function App() {
   const handleSearch = async (filters) => {
     setLoading(true);
     setError(null);
+    setCurrentFilters(filters);
+    setCurrentPage(1);
     try {
-      const data = await searchJobs(filters);
+      const data = await searchJobs({ ...filters, page: 1 });
       setResults(data.jobs);
       setSearched(true);
+      setHasMore(data.jobs.length >= PAGE_SIZE);
     } catch (e) {
       setError(e.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLoadMore = async () => {
+    if (!currentFilters || loadingMore) return;
+    const nextPage = currentPage + 1;
+    setLoadingMore(true);
+    setError(null);
+    try {
+      const data = await searchJobs({ ...currentFilters, page: nextPage });
+      setResults((prev) => [...prev, ...data.jobs]);
+      setCurrentPage(nextPage);
+      setHasMore(data.jobs.length >= PAGE_SIZE);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -59,6 +84,9 @@ export default function App() {
             {searched && !loading && results.length === 0 && (
               <p className="empty-state">No results found. Try different keywords.</p>
             )}
+            {searched && results.length > 0 && (
+              <p className="result-count">{results.length} job{results.length !== 1 ? "s" : ""} found</p>
+            )}
             <div className="job-grid">
               {results.map((job) => (
                 <JobCard
@@ -72,6 +100,17 @@ export default function App() {
                 />
               ))}
             </div>
+            {hasMore && (
+              <div className="load-more-wrap">
+                <button
+                  className="btn btn--outline btn--load-more"
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                >
+                  {loadingMore ? "Loading…" : "Load more"}
+                </button>
+              </div>
+            )}
           </>
         )}
 

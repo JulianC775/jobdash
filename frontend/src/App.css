@@ -212,6 +212,24 @@ body {
 .status-tab:hover { background: var(--bg-elevated); color: var(--text); }
 .status-tab--active { background: var(--accent); color: var(--accent-dark); border-color: var(--accent); font-weight: 600; }
 
+/* ── Result count & load more ── */
+.result-count {
+  font-size: .85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.load-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.btn--load-more {
+  padding: .65rem 2rem;
+  font-size: .95rem;
+}
+
 /* ── Misc ── */
 .error-banner {
   background: var(--danger-bg);
