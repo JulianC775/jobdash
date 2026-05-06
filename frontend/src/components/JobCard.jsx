@@ -8,6 +8,8 @@ const STATUS_COLORS = {
   rejected: "#dc3545",
 };
 
+const DESC_LIMIT = 200;
+
 function formatSalary(min, max, currency, period) {
   if (!min && !max) return null;
   const fmt = (n) => n ? `${currency || "$"}${Number(n).toLocaleString()}` : null;
@@ -15,10 +17,27 @@ function formatSalary(min, max, currency, period) {
   return period ? `${range} / ${period.toLowerCase()}` : range;
 }
 
+function postedAgo(isoString) {
+  if (!isoString) return null;
+  const ms = Date.now() - new Date(isoString).getTime();
+  const days = Math.floor(ms / 86_400_000);
+  if (days === 0) return "Today";
+  if (days === 1) return "1d ago";
+  if (days < 30) return `${days}d ago`;
+  const months = Math.floor(days / 30);
+  return months === 1 ? "1mo ago" : `${months}mo ago`;
+}
+
 export default function JobCard({ job, isBookmarked, onBookmark, bookmarkEntry, onRemove, onStatusChange, onNotesChange }) {
   const salary = formatSalary(job.salary_min, job.salary_max, job.salary_currency, job.salary_period);
+  const ago = postedAgo(job.posted_at);
+  const [expanded, setExpanded] = useState(false);
   const [localNotes, setLocalNotes] = useState(bookmarkEntry?.notes ?? "");
   const [notesDirty, setNotesDirty] = useState(false);
+
+  const desc = job.description || "";
+  const needsExpand = desc.length > DESC_LIMIT;
+  const displayDesc = expanded || !needsExpand ? desc : desc.slice(0, DESC_LIMIT) + "…";
 
   const handleNotesBlur = () => {
     if (notesDirty && onNotesChange) {
@@ -44,10 +63,18 @@ export default function JobCard({ job, isBookmarked, onBookmark, bookmarkEntry, 
         {job.is_remote && <span className="badge badge--remote">Remote</span>}
         {job.employment_type && <span className="badge">{job.employment_type}</span>}
         {salary && <span className="badge badge--salary">💰 {salary}</span>}
+        {ago && <span className="badge badge--ago">{ago}</span>}
       </div>
 
-      {job.description && (
-        <p className="job-card__desc">{job.description.slice(0, 200)}…</p>
+      {desc && (
+        <div className="job-card__desc-wrap">
+          <p className="job-card__desc">{displayDesc}</p>
+          {needsExpand && (
+            <button className="btn-link" onClick={() => setExpanded((x) => !x)}>
+              {expanded ? "Show less" : "Show more"}
+            </button>
+          )}
+        </div>
       )}
 
       <div className="job-card__actions">

@@ -6,6 +6,8 @@ db = SQLAlchemy()
 _NEW_COLUMNS = [
     "ALTER TABLE bookmarks ADD COLUMN notes TEXT DEFAULT ''",
     "ALTER TABLE bookmarks ADD COLUMN employer_logo TEXT",
+    "ALTER TABLE bookmarks ADD COLUMN salary_period TEXT",
+    "ALTER TABLE bookmarks ADD COLUMN posted_at TEXT",
 ]
 
 

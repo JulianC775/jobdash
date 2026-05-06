@@ -175,8 +175,22 @@ body {
 .badge--remote  { background: var(--badge-remote-bg);  color: var(--badge-remote-text); }
 .badge--salary  { background: var(--badge-salary-bg);  color: var(--badge-salary-text); }
 .badge--location { background: var(--badge-loc-bg);    color: var(--badge-loc-text); }
+.badge--ago     { background: var(--bg-elevated);      color: var(--text-muted); font-size: .74rem; }
 
+.job-card__desc-wrap { display: flex; flex-direction: column; gap: .25rem; }
 .job-card__desc { font-size: .85rem; color: var(--text-muted); line-height: 1.5; }
+
+.btn-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  font-size: .8rem;
+  cursor: pointer;
+  text-align: left;
+  width: fit-content;
+}
+.btn-link:hover { text-decoration: underline; }
 
 .job-card__actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; }
 
@@ -192,10 +206,17 @@ body {
 }
 
 /* ── Bookmark list ── */
-.bookmark-list { display: flex; flex-direction: column; gap: 1.5rem; }
+.bookmark-list { display: flex; flex-direction: column; gap: 1.25rem; }
 
 .bookmark-list__header { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
 .bookmark-list__header h2 { font-size: 1.2rem; color: var(--text); }
+
+.bookmark-list__controls {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
 
 .status-tabs { display: flex; flex-wrap: wrap; gap: .4rem; }
 

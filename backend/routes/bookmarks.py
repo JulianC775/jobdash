@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, abort
 from db import db
 from models import Bookmark, VALID_STATUSES
 
@@ -37,6 +37,8 @@ def add_bookmark():
         apply_link=data.get("apply_link"),
         description=data.get("description"),
         employer_logo=data.get("employer_logo"),
+        salary_period=data.get("salary_period"),
+        posted_at=data.get("posted_at"),
         status="saved",
         notes="",
     )
@@ -47,7 +49,7 @@ def add_bookmark():
 
 @bookmarks_bp.route("/<int:bookmark_id>", methods=["DELETE"])
 def delete_bookmark(bookmark_id):
-    bookmark = Bookmark.query.get_or_404(bookmark_id)
+    bookmark = db.session.get(Bookmark, bookmark_id) or abort(404)
     db.session.delete(bookmark)
     db.session.commit()
     return jsonify({"message": "deleted"}), 200
@@ -55,7 +57,7 @@ def delete_bookmark(bookmark_id):
 
 @bookmarks_bp.route("/<int:bookmark_id>/status", methods=["PATCH"])
 def update_status(bookmark_id):
-    bookmark = Bookmark.query.get_or_404(bookmark_id)
+    bookmark = db.session.get(Bookmark, bookmark_id) or abort(404)
     data = request.get_json(silent=True)
     new_status = data.get("status") if data else None
 
@@ -69,7 +71,7 @@ def update_status(bookmark_id):
 
 @bookmarks_bp.route("/<int:bookmark_id>/notes", methods=["PATCH"])
 def update_notes(bookmark_id):
-    bookmark = Bookmark.query.get_or_404(bookmark_id)
+    bookmark = db.session.get(Bookmark, bookmark_id) or abort(404)
     data = request.get_json(silent=True)
     if data is None or "notes" not in data:
         return jsonify({"error": "notes field is required"}), 400

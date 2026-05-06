@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from db import db
 
 VALID_STATUSES = {"saved", "applied", "interviewing", "offer", "rejected"}
@@ -19,10 +19,12 @@ class Bookmark(db.Model):
     is_remote = db.Column(db.Boolean, default=False)
     apply_link = db.Column(db.Text)
     description = db.Column(db.Text)
+    salary_period = db.Column(db.String(20))
+    posted_at = db.Column(db.String(50))
     status = db.Column(db.String(50), default="saved")
     notes = db.Column(db.Text, default="")
     employer_logo = db.Column(db.Text)
-    saved_at = db.Column(db.DateTime, default=datetime.utcnow)
+    saved_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def to_dict(self):
         return {
@@ -34,11 +36,13 @@ class Bookmark(db.Model):
             "salary_min": self.salary_min,
             "salary_max": self.salary_max,
             "salary_currency": self.salary_currency,
+            "salary_period": self.salary_period,
             "employment_type": self.employment_type,
             "is_remote": self.is_remote,
             "apply_link": self.apply_link,
             "description": self.description,
             "employer_logo": self.employer_logo,
+            "posted_at": self.posted_at,
             "status": self.status,
             "notes": self.notes or "",
             "saved_at": self.saved_at.isoformat(),
