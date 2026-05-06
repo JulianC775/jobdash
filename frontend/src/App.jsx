@@ -9,6 +9,21 @@ import "./App.css";
 const TABS = ["search", "saved"];
 const PAGE_SIZE = 10;
 
+const SORT_OPTIONS = [
+  { value: "relevance", label: "Relevance" },
+  { value: "salary_desc", label: "Salary: High → Low" },
+  { value: "salary_asc", label: "Salary: Low → High" },
+];
+
+function sortJobs(jobs, sort) {
+  if (sort === "relevance") return jobs;
+  return [...jobs].sort((a, b) => {
+    const av = a.salary_max ?? a.salary_min ?? -1;
+    const bv = b.salary_max ?? b.salary_min ?? -1;
+    return sort === "salary_desc" ? bv - av : av - bv;
+  });
+}
+
 export default function App() {
   const [tab, setTab] = useState("search");
   const [results, setResults] = useState([]);
@@ -20,8 +35,9 @@ export default function App() {
   const [currentFilters, setCurrentFilters] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  const [sort, setSort] = useState("relevance");
 
-  const { bookmarks, bookmarkedIds, save, remove, setStatus } = useBookmarks();
+  const { bookmarks, bookmarkedIds, save, remove, setStatus, setNotes } = useBookmarks();
 
   const bookmarkMap = Object.fromEntries(bookmarks.map((b) => [b.job_id, b]));
 
@@ -85,10 +101,21 @@ export default function App() {
               <p className="empty-state">No results found. Try different keywords.</p>
             )}
             {searched && results.length > 0 && (
-              <p className="result-count">{results.length} job{results.length !== 1 ? "s" : ""} found</p>
+              <div className="results-bar">
+                <p className="result-count">{results.length} job{results.length !== 1 ? "s" : ""} found</p>
+                <select
+                  className="sort-select"
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                >
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              </div>
             )}
             <div className="job-grid">
-              {results.map((job) => (
+              {sortJobs(results, sort).map((job) => (
                 <JobCard
                   key={job.job_id}
                   job={job}
@@ -97,6 +124,7 @@ export default function App() {
                   onBookmark={save}
                   onRemove={remove}
                   onStatusChange={setStatus}
+                  onNotesChange={setNotes}
                 />
               ))}
             </div>
@@ -119,6 +147,7 @@ export default function App() {
             bookmarks={bookmarks}
             onRemove={remove}
             onStatusChange={setStatus}
+            onNotesChange={setNotes}
             filter={statusFilter}
             onFilterChange={setStatusFilter}
           />

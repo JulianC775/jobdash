@@ -20,6 +20,8 @@ class Bookmark(db.Model):
     apply_link = db.Column(db.Text)
     description = db.Column(db.Text)
     status = db.Column(db.String(50), default="saved")
+    notes = db.Column(db.Text, default="")
+    employer_logo = db.Column(db.Text)
     saved_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
@@ -36,6 +38,8 @@ class Bookmark(db.Model):
             "is_remote": self.is_remote,
             "apply_link": self.apply_link,
             "description": self.description,
+            "employer_logo": self.employer_logo,
             "status": self.status,
+            "notes": self.notes or "",
             "saved_at": self.saved_at.isoformat(),
         }

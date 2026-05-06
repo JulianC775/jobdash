@@ -52,3 +52,13 @@ export async function updateStatus(id, status) {
   if (!res.ok) throw new Error("Failed to update status");
   return res.json();
 }
+
+export async function updateNotes(id, notes) {
+  const res = await fetch(`${BASE}/bookmarks/${id}/notes`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ notes }),
+  });
+  if (!res.ok) throw new Error("Failed to save notes");
+  return res.json();
+}

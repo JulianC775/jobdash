@@ -36,7 +36,9 @@ def add_bookmark():
         is_remote=data.get("is_remote", False),
         apply_link=data.get("apply_link"),
         description=data.get("description"),
+        employer_logo=data.get("employer_logo"),
         status="saved",
+        notes="",
     )
     db.session.add(bookmark)
     db.session.commit()
@@ -61,5 +63,17 @@ def update_status(bookmark_id):
         return jsonify({"error": f"status must be one of {sorted(VALID_STATUSES)}"}), 400
 
     bookmark.status = new_status
+    db.session.commit()
+    return jsonify(bookmark.to_dict())
+
+
+@bookmarks_bp.route("/<int:bookmark_id>/notes", methods=["PATCH"])
+def update_notes(bookmark_id):
+    bookmark = Bookmark.query.get_or_404(bookmark_id)
+    data = request.get_json(silent=True)
+    if data is None or "notes" not in data:
+        return jsonify({"error": "notes field is required"}), 400
+
+    bookmark.notes = data["notes"]
     db.session.commit()
     return jsonify(bookmark.to_dict())

@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const STATUS_COLORS = {
   saved: "#6c757d",
   applied: "#0d6efd",
@@ -13,8 +15,17 @@ function formatSalary(min, max, currency, period) {
   return period ? `${range} / ${period.toLowerCase()}` : range;
 }
 
-export default function JobCard({ job, isBookmarked, onBookmark, bookmarkEntry, onRemove, onStatusChange }) {
+export default function JobCard({ job, isBookmarked, onBookmark, bookmarkEntry, onRemove, onStatusChange, onNotesChange }) {
   const salary = formatSalary(job.salary_min, job.salary_max, job.salary_currency, job.salary_period);
+  const [localNotes, setLocalNotes] = useState(bookmarkEntry?.notes ?? "");
+  const [notesDirty, setNotesDirty] = useState(false);
+
+  const handleNotesBlur = () => {
+    if (notesDirty && onNotesChange) {
+      onNotesChange(bookmarkEntry.id, localNotes);
+      setNotesDirty(false);
+    }
+  };
 
   return (
     <div className="job-card">
@@ -72,6 +83,17 @@ export default function JobCard({ job, isBookmarked, onBookmark, bookmarkEntry, 
           </select>
         )}
       </div>
+
+      {isBookmarked && (
+        <textarea
+          className="job-card__notes"
+          placeholder="Add notes… (saved automatically)"
+          value={localNotes}
+          onChange={(e) => { setLocalNotes(e.target.value); setNotesDirty(true); }}
+          onBlur={handleNotesBlur}
+          rows={3}
+        />
+      )}
     </div>
   );
 }

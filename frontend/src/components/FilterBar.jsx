@@ -8,14 +8,26 @@ const EMPLOYMENT_TYPES = [
   { value: "INTERN", label: "Internship" },
 ];
 
+const LS_KEY = "jobdash_filters";
+
+function loadSaved() {
+  try {
+    return JSON.parse(localStorage.getItem(LS_KEY)) || null;
+  } catch {
+    return null;
+  }
+}
+
+const DEFAULT_FILTERS = {
+  query: "",
+  location: "",
+  remote: false,
+  employmentType: "",
+  salaryMin: "",
+};
+
 export default function FilterBar({ onSearch, loading }) {
-  const [filters, setFilters] = useState({
-    query: "",
-    location: "",
-    remote: false,
-    employmentType: "",
-    salaryMin: "",
-  });
+  const [filters, setFilters] = useState(() => loadSaved() || DEFAULT_FILTERS);
 
   const set = (key) => (e) =>
     setFilters((f) => ({ ...f, [key]: e.target.type === "checkbox" ? e.target.checked : e.target.value }));
@@ -23,6 +35,7 @@ export default function FilterBar({ onSearch, loading }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!filters.query.trim()) return;
+    localStorage.setItem(LS_KEY, JSON.stringify(filters));
     onSearch({ ...filters, page: 1 });
   };
 

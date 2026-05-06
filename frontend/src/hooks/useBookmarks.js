@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { getBookmarks, addBookmark, deleteBookmark, updateStatus } from "../api/jobs";
+import { getBookmarks, addBookmark, deleteBookmark, updateStatus, updateNotes } from "../api/jobs";
 
 export function useBookmarks() {
   const [bookmarks, setBookmarks] = useState([]);
@@ -32,5 +32,10 @@ export function useBookmarks() {
     await refresh();
   }, [refresh]);
 
-  return { bookmarks, bookmarkedIds, save, remove, setStatus };
+  const setNotes = useCallback(async (id, notes) => {
+    await updateNotes(id, notes);
+    await refresh();
+  }, [refresh]);
+
+  return { bookmarks, bookmarkedIds, save, remove, setStatus, setNotes };
 }

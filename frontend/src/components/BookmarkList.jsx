@@ -2,7 +2,26 @@ import JobCard from "./JobCard";
 
 const STATUS_FILTERS = ["all", "saved", "applied", "interviewing", "offer", "rejected"];
 
-export default function BookmarkList({ bookmarks, onRemove, onStatusChange, filter, onFilterChange }) {
+const CSV_FIELDS = ["title", "company", "location", "status", "employment_type", "apply_link", "saved_at", "notes"];
+
+function toCSV(rows) {
+  const escape = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const header = CSV_FIELDS.join(",");
+  const lines = rows.map((r) => CSV_FIELDS.map((f) => escape(r[f])).join(","));
+  return [header, ...lines].join("\n");
+}
+
+function downloadCSV(rows) {
+  const blob = new Blob([toCSV(rows)], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "saved_jobs.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export default function BookmarkList({ bookmarks, onRemove, onStatusChange, onNotesChange, filter, onFilterChange }) {
   const visible = filter === "all" ? bookmarks : bookmarks.filter((b) => b.status === filter);
 
   return (
@@ -20,6 +39,14 @@ export default function BookmarkList({ bookmarks, onRemove, onStatusChange, filt
             </button>
           ))}
         </div>
+        {visible.length > 0 && (
+          <button
+            className="btn btn--outline btn--export"
+            onClick={() => downloadCSV(visible)}
+          >
+            Export CSV
+          </button>
+        )}
       </div>
 
       {visible.length === 0 ? (
@@ -34,6 +61,7 @@ export default function BookmarkList({ bookmarks, onRemove, onStatusChange, filt
               bookmarkEntry={b}
               onRemove={onRemove}
               onStatusChange={onStatusChange}
+              onNotesChange={onNotesChange}
             />
           ))}
         </div>
